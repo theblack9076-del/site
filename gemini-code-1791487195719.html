@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUNKGSM - Servidor Profissional de Ferramentas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            900: '#065f46',
+                            950: '#022c22'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-950 text-slate-100 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- MODAL DE LOGIN -->
+    <div id="auth-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white text-slate-900 rounded-2xl w-full max-w-md shadow-2xl relative p-8">
+            <button id="close-modal-btn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 w-8 h-8 flex items-center justify-center rounded-full bg-slate-100 transition cursor-pointer">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="space-y-6">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900">LUNK GSM <span class="text-brand-600">Login</span></h2>
+                    <p class="text-slate-500 text-xs mt-1">Entre com sua conta autorizada para acessar o painel</p>
+                </div>
+
+                <div id="login-error" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-xs font-medium"></div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">E-mail</label>
+                        <input type="email" id="login-email" placeholder="usuario1@lunkgsm.com" value="usuario1@lunkgsm.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-slate-900">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Senha</label>
+                        <input type="password" id="login-password" placeholder="Sua senha (ex: lunk123)" value="lunk123" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-900 focus:outline-none focus:border-slate-900">
+                    </div>
+                    <button type="button" id="login-submit-btn" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl text-xs transition cursor-pointer shadow-lg shadow-slate-900/10">
+                        Entrar no Sistema
+                    </button>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 text-center">
+                    <p class="text-xs text-slate-500 mb-3">Não tem conta ou quer criar uma?</p>
+                    <button type="button" id="whatsapp-register-btn" class="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs transition cursor-pointer shadow-md">
+                        <i class="fa-brands fa-whatsapp text-sm"></i> Criar Conta via WhatsApp
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-500 to-emerald-700 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-brand-500/20">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-black tracking-wider text-white">LUNK <span class="text-brand-400">GSM</span></h1>
+                    <p class="text-[10px] text-slate-400 tracking-widest uppercase">Professional Server</p>
+                </div>
+            </div>
+
+            <nav class="hidden lg:flex items-center gap-1">
+                <button class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition cursor-pointer bg-slate-800 text-white" data-tab="dashboard"><i class="fa-solid fa-chart-pie mr-1"></i> Dashboard</button>
+                <button class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold text-brand-400 hover:bg-slate-800 transition cursor-pointer" data-tab="iphone"><i class="fa-brands fa-apple mr-1"></i> Definitivo IPhone</button>
+                <button class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition cursor-pointer" data-tab="services"><i class="fa-solid fa-list-check mr-1"></i> Serviços</button>
+                <button class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition cursor-pointer" data-tab="store"><i class="fa-solid fa-store mr-1"></i> Store</button>
+                <button class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition cursor-pointer" data-tab="orders"><i class="fa-solid fa-box mr-1"></i> Meus Pedidos</button>
+                <button class="nav-btn px-3 py-2 rounded-lg text-xs font-semibold text-slate-300 hover:bg-slate-800 transition cursor-pointer" data-tab="bulk"><i class="fa-solid fa-layer-group mr-1"></i> Bulk Order</button>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <div class="bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl flex items-center gap-3">
+                    <div class="text-right">
+                        <p class="text-[9px] text-slate-400 uppercase tracking-wider">Saldo Atual</p>
+                        <p class="text-xs font-bold text-brand-400" id="user-balance-display">R$ 0,00</p>
+                    </div>
+                    <button id="open-balance-modal-btn" class="bg-brand-600 hover:bg-brand-500 text-white w-7 h-7 rounded-lg flex items-center justify-center text-xs transition shadow-md cursor-pointer" title="Adicionar Saldo">
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                </div>
+
+                <div class="relative">
+                    <button id="user-auth-btn" class="flex items-center gap-2 bg-slate-950 border border-slate-800 px-3 py-2.5 rounded-xl hover:border-slate-700 transition cursor-pointer text-xs font-bold text-brand-400">
+                        <i class="fa-solid fa-user-circle mr-1"></i> <span id="user-btn-label">Entrar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 max-w-7xl mx-auto px-4 py-8 w-full">
+        
+        <!-- DASHBOARD -->
+        <div id="tab-dashboard" class="space-y-6 tab-content">
+            <div class="bg-gradient-to-r from-slate-900 to-slate-900/60 border border-slate-800 rounded-3xl p-8 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6">
+                <div>
+                    <span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">LUNK GSM Server</span>
+                    <h2 class="text-3xl font-black text-white mt-3">FERRAMENTAS PROFISSIONAIS PARA <br><span class="text-brand-400">TÉCNICOS E LOJISTAS!</span></h2>
+                    <p class="text-slate-400 text-sm mt-2 max-w-xl">Plataforma automatizada para ativações e Definitivo iPhone com entrega rápida.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <button data-gotab="iphone" class="nav-shortcut bg-brand-600 hover:bg-brand-500 text-white font-bold px-6 py-3.5 rounded-xl text-sm transition shadow-lg shadow-brand-600/30 flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-brands fa-apple"></i> Definitivo iPhone
+                    </button>
+                    <button data-gotab="store" class="nav-shortcut bg-slate-900 hover:bg-slate-800 text-white font-bold px-6 py-3.5 rounded-xl text-sm border border-slate-800 transition flex items-center justify-center gap-2 cursor-pointer">
+                        <i class="fa-solid fa-store"></i> Acessar Store
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA DEFINITIVO IPHONE -->
+        <div id="tab-iphone" class="space-y-6 tab-content hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                    <div>
+                        <span class="bg-brand-500/10 text-brand-400 border border-brand-500/20 text-[10px] font-bold px-2.5 py-1 rounded-md uppercase">IOS SUPORTADO 12-27 TODOS IOS</span>
+                        <h3 class="text-xl font-bold text-white mt-2">Definitivo IPhone (Pedidos XR ao 18)</h3>
+                        <p class="text-xs text-slate-400 mt-1">Selecione o serviço desejado para realizar o seu pedido.</p>
+                    </div>
+                    <div class="w-full md:w-72">
+                        <input type="text" id="search-iphone-input" placeholder="Filtrar modelo..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Serviço / Modelo</th>
+                                <th class="p-3">Tempo Médio</th>
+                                <th class="p-3">iOS Suportado</th>
+                                <th class="p-3">Preço</th>
+                                <th class="p-3 text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="iphone-table-body" class="divide-y divide-slate-800 text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- SERVIÇOS -->
+        <div id="tab-services" class="space-y-6 tab-content hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Serviços e Ferramentas</h3>
+                        <p class="text-xs text-slate-400 mt-1">Lista completa de todos os serviços do painel.</p>
+                    </div>
+                    <div class="w-full md:w-72">
+                        <input type="text" id="search-full-service" placeholder="Buscar na tabela..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Categoria</th>
+                                <th class="p-3">Nome do Serviço</th>
+                                <th class="p-3">Tempo Médio</th>
+                                <th class="p-3">Valor</th>
+                                <th class="p-3 text-center">Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="full-services-table-body" class="divide-y divide-slate-800 text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- STORE -->
+        <div id="tab-store" class="space-y-6 tab-content hidden">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4 bg-slate-900 p-4 rounded-2xl border border-slate-800">
+                <div class="flex items-center gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0" id="store-cat-buttons">
+                    <button data-cat="all" class="cat-btn bg-brand-600 text-white px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer">Todos</button>
+                    <button data-cat="definitivo_iphone" class="cat-btn bg-slate-950 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer">Definitivo IPhone</button>
+                    <button data-cat="tools" class="cat-btn bg-slate-950 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer">Atativações & Tools</button>
+                    <button data-cat="schematics" class="cat-btn bg-slate-950 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer">Schematics</button>
+                    <button data-cat="rent" class="cat-btn bg-slate-950 text-slate-300 hover:bg-slate-800 px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer">Aluguel de Ferramentas</button>
+                </div>
+                <div class="w-full md:w-72">
+                    <input type="text" id="search-service" placeholder="Pesquisar produto..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-brand-500">
+                </div>
+            </div>
+            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </div>
+
+        <!-- ORDERS -->
+        <div id="tab-orders" class="space-y-6 tab-content hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-2">Meus Pedidos Realizados</h3>
+                <p class="text-xs text-slate-400 mb-4">Histórico completo de todos os pedidos solicitados.</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                            <tr>
+                                <th class="p-3">Produto / Serviço</th>
+                                <th class="p-3">Valor</th>
+                                <th class="p-3">Data</th>
+                                <th class="p-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body" class="divide-y divide-slate-800 text-slate-300"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- BULK -->
+        <div id="tab-bulk" class="space-y-6 tab-content hidden">
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6">
+                <h3 class="text-lg font-bold text-white mb-2">Bulk Orders (Pedidos em Massa)</h3>
+                <p class="text-xs text-slate-400 mb-4">Insira múltiplos IMEIs ou números de série para processamento simultâneo.</p>
+                <div class="space-y-4 max-w-xl">
+                    <select id="bulk-service" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-brand-500"></select>
+                    <textarea id="bulk-imeis" rows="5" placeholder="Insira um IMEI ou SN por linha..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-xs font-mono text-white focus:outline-none focus:border-brand-500"></textarea>
+                    <button id="process-bulk-btn" class="bg-brand-600 hover:bg-brand-500 text-white font-semibold px-6 py-3 rounded-xl text-xs transition cursor-pointer">Processar Pedido em Massa</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL SALDO -->
+    <div id="balance-modal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold text-white">Adicionar Saldo</h3>
+                <button id="close-balance-modal-btn" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <label class="block text-xs text-slate-400 mb-2">Valor da Recarga (R$):</label>
+            <input type="number" id="recharge-amount" value="100" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white mb-4">
+            <button id="whatsapp-pay-btn" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl text-xs transition cursor-pointer">Pagar via WhatsApp</button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        let currentUser = localStorage.getItem('lunk_current_user') || null;
+        let userBalance = parseFloat(localStorage.getItem('lunk_balance')) || 0.00;
+        let userOrders = JSON.parse(localStorage.getItem('lunk_orders')) || [];
+        
+        // Base de contas autorizadas (Administradores + os 1000 usuários padrão)
+        const registeredAccounts = {
+            'suporte@lunkgsm.com': '123456',
+            'admin@lunkgsm.com': 'admin123'
+        };
+        for (let i = 1; i <= 1000; i++) {
+            registeredAccounts[`usuario${i}@lunkgsm.com`] = 'lunk123';
+        }
+
+        const iphoneServices = [
+            { id: 101, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone XR Clean ICloud', time: '1-8 dias', price: 150.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 102, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone XR Clean ICloud', time: '1-2 dias', price: 220.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 103, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 11 Clean ICloud', time: '1-8 dias', price: 220.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 104, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 11 Clean ICloud', time: '1-2 dias', price: 300.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 105, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 12 Clean ICloud', time: '1-8 dias', price: 250.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 106, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 12 Clean ICloud', time: '1-2 dias', price: 350.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 107, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 13 Clean ICloud', time: '1-8 dias', price: 300.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 108, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 13 Clean ICloud', time: '1-2 dias', price: 450.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 109, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 14 Clean ICloud', time: '1-8 dias', price: 350.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 110, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 14 Clean ICloud', time: '1-2 dias', price: 500.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 111, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 15 Clean ICloud', time: '1-8 dias', price: 440.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 112, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 15 Clean ICloud', time: '1-2 dias', price: 590.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 113, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 16 Clean ICloud', time: '1-8 dias', price: 500.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 114, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 16 Clean ICloud', time: '1-2 dias', price: 680.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 115, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 17 Clean ICloud', time: '1-8 dias', price: 660.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 116, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 17 Clean ICloud', time: '1-2 dias', price: 800.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 117, category: 'definitivo_iphone', title: 'TG / Definitivo IPhone 18 Clean ICloud', time: '1-8 dias', price: 980.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' },
+            { id: 118, category: 'definitivo_iphone', title: 'Slim / Definitivo IPhone 18 Clean ICloud', time: '1-2 dias', price: 1300.00, ios: 'IOS SUPORTADO 12-27 TODOS IOS' }
+        ];
+
+        const videoToolsServices = [
+            { id: 301, category: 'tools', title: 'Galaxy Multi Tool GMT Tool Credits', time: 'Instant', price: 90.00, ios: 'Windows' },
+            { id: 302, category: 'tools', title: 'Galaxy Multi Tool 20 Credit Pack', time: 'Instant', price: 150.00, ios: 'Windows' },
+            { id: 303, category: 'tools', title: 'KG Killer Tool - 1 Year Activation', time: 'Instant', price: 117.60, ios: 'Windows' },
+            { id: 304, category: 'tools', title: 'Xiaomi FRP 1 Click Remove \ Flash\ Frp\ Fdl Credit Refill for Existing User', time: '24/7 Online', price: 80.00, ios: 'Android' },
+            { id: 305, category: 'tools', title: 'Realme FRP OneClick Reset and O+ Support (MTK + QC) Demo Remove', time: 'Instant', price: 75.00, ios: 'Android' },
+            { id: 306, category: 'tools', title: 'OnlineFRPTool OFT Existing Credits Transfer - Xiaomi FRP', time: 'Instant', price: 65.00, ios: 'Android' },
+            { id: 307, category: 'tools', title: 'The Magical Tool (Motorola Unlock) Create New User', time: 'Instant', price: 110.00, ios: 'Windows' },
+            { id: 308, category: 'tools', title: 'The Magical Tool (Motorola Unlock) Transfer to Existing user', time: 'Instant', price: 95.00, ios: 'Windows' },
+            { id: 309, category: 'tools', title: 'FRPFILE HELLO SCREEN Usbiliter8 Exploit Tool - Magic CFG A12 - A13', time: 'Instant', price: 130.00, ios: 'iOS' },
+            { id: 310, category: 'tools', title: 'FRPFILE Ramdisk for A12 Bypass Passcode, Read Owner, Hardware Info', time: 'Instant', price: 140.00, ios: 'iOS' },
+            { id: 311, category: 'tools', title: 'Xiaomi Mi Account Lock Remove (Brazil) Clean Only', time: 'Instant', price: 85.00, ios: 'Xiaomi' },
+            { id: 312, category: 'tools', title: 'Xiaomi Mi Account Lock Remove (Worldwide) Clean Support 100% SUCCESS', time: 'Instant', price: 120.00, ios: 'Xiaomi' },
+            { id: 313, category: 'tools', title: 'Alien Tool 3 Months Activation For (Moto FRP-UBL-PayLoy) No Need Credits', time: 'Instant', price: 90.00, ios: 'Motorola' },
+            { id: 314, category: 'tools', title: 'Alien Tool 6 Months Activation For (Moto FRP-UBL-PayLoy) No Need Credits', time: 'Instant', price: 150.00, ios: 'Motorola' },
+            { id: 315, category: 'tools', title: 'Alien Tool 12 Months Activation For (Moto FRP-UBL-PayLoy) No Need Credits', time: 'Instant', price: 240.00, ios: 'Motorola' },
+            { id: 316, category: 'tools', title: 'Usbiliter8 Exploit Tool - Magic CFG A12 - A13', time: 'Instant', price: 100.00, ios: 'iOS' },
+            { id: 317, category: 'schematics', title: 'Orion by Estech Schematics - 1 Month Activation', time: 'Instant', price: 50.00, ios: 'PC / Web' },
+            { id: 318, category: 'schematics', title: 'Orion by Estech Schematics 6 Month Activation Code (1 PC)', time: 'Instant', price: 160.00, ios: 'PC / Web' },
+            { id: 319, category: 'schematics', title: 'Orion by Estech Schematics - 1 Year 1 PC Activation', time: 'Instant', price: 260.00, ios: 'PC / Web' },
+            { id: 320, category: 'schematics', title: 'Orion by Estech Schematics - 1 Year 2 PC Activation', time: 'Instant', price: 340.00, ios: 'PC / Web' },
+            { id: 321, category: 'iphone', title: 'APPLE SOLD BY & COUNTRY INFO', time: 'Instant', price: 25.00, ios: 'Apple' },
+            { id: 322, category: 'iphone', title: 'APPLE SOLD BY - IPAD & MAC & WATCH', time: 'Instant', price: 35.00, ios: 'Apple' },
+            { id: 323, category: 'iphone', title: 'IPHONE CARRIER', time: 'Instant', price: 20.00, ios: 'Apple' },
+            { id: 324, category: 'iphone', title: 'APPLE SERIAL INFO', time: 'Instant', price: 15.00, ios: 'Apple' },
+            { id: 325, category: 'iphone', title: 'ICLOUD ON/OFF', time: 'Instant', price: 30.00, ios: 'Apple' },
+            { id: 326, category: 'iphone', title: 'APPLE MDM STATUS', time: 'Instant', price: 25.00, ios: 'Apple' },
+            { id: 327, category: 'iphone', title: 'IPHONE & MAC ICLOUD CLEAN/LOST STATUS', time: 'Instant', price: 25.00, ios: 'Apple' },
+            { id: 328, category: 'iphone', title: 'HFZ Ramdisk A12/A13 Bypass Passcode', time: '1-10 min', price: 180.00, ios: 'iOS' },
+            { id: 329, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPHONE 11 PRO', time: '1-10 min', price: 210.00, ios: 'iOS' },
+            { id: 330, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPHONE 11 PRO MAX', time: '1-10 min', price: 230.00, ios: 'iOS' },
+            { id: 331, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPHONE SE (2GN)', time: '1-10 min', price: 170.00, ios: 'iOS' },
+            { id: 332, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPAD Mini (5th gen.)', time: '1-10 min', price: 190.00, ios: 'iOS' },
+            { id: 333, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPAD Air (3D gen.)', time: '1-10 min', price: 190.00, ios: 'iOS' },
+            { id: 334, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPAD (9th Gen)', time: '1-10 min', price: 180.00, ios: 'iOS' },
+            { id: 335, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPAD (8th Gen)', time: '1-10 min', price: 180.00, ios: 'iOS' },
+            { id: 336, category: 'iphone', title: 'HFZ Ramdisk (Passcode Bypass + Owner info) IPHONE XR', time: '1-10 min', price: 170.00, ios: 'iOS' },
+            { id: 337, category: 'tools', title: 'Moto M Tool 1 Year Activation - For New Users', time: 'Instant', price: 110.00, ios: 'Motorola' },
+            { id: 338, category: 'tools', title: 'Moto M Tool 1 Year Activation Renew', time: 'Instant', price: 95.00, ios: 'Motorola' },
+            { id: 339, category: 'tools', title: 'Moto M Tool Credits For (Existing User)', time: 'Instant', price: 80.00, ios: 'Motorola' },
+            { id: 340, category: 'tools', title: 'DFT Pro Activation For 1 Year (New Users)', time: 'Instant', price: 180.00, ios: 'Windows' },
+            { id: 341, category: 'tools', title: 'DFT Pro (OLD USER) 1 Year Renew', time: 'Instant', price: 140.00, ios: 'Windows' },
+            { id: 342, category: 'tools', title: 'Samsung Tool, KG Bypass Activation for 12 Months', time: 'Instant', price: 130.00, ios: 'Samsung' },
+            { id: 343, category: 'tools', title: 'Samsung Tool, KG Bypass Activation for 3 Months', time: 'Instant', price: 70.00, ios: 'Samsung' },
+            { id: 344, category: 'tools', title: 'Samsung Tool KG Bypass - SamsungToolUs Activation for 1 Day with 10 Credits', time: 'Instant', price: 40.00, ios: 'Samsung' },
+            { id: 345, category: 'tools', title: 'Samsung Tool KG Bypass - Credits For Existing User', time: 'Instant', price: 60.00, ios: 'Samsung' },
+            { id: 346, category: 'tools', title: 'SamsungToolUs (Activation 6 Months 1 Pc)', time: 'Instant', price: 150.00, ios: 'Samsung' },
+            { id: 347, category: 'tools', title: 'FRPFILE ACTIVATOR A12 + Bypass Hello Screen iPhone 11 to 16 Pro Max', time: 'Instant', price: 200.00, ios: 'iOS' },
+            { id: 348, category: 'tools', title: 'FRPFILE A12+ Bypass Refund', time: 'Instant', price: 150.00, ios: 'iOS' },
+            { id: 349, category: 'tools', title: 'GFT Global Frp Tool Xiaomi', time: 'Instant', price: 90.00, ios: 'Xiaomi' },
+            { id: 350, category: 'tools', title: 'GFT Global Frp Tool Xiaomi Credit', time: 'Instant', price: 50.00, ios: 'Xiaomi' },
+            { id: 351, category: 'tools', title: 'GFT Global Frp Tool Realme 1 Click FRP Unlock Credit Any Qty', time: 'Instant', price: 60.00, ios: 'Android' },
+            { id: 352, category: 'tools', title: 'TSM-Pro 1 Year Activation (Instant)', time: 'Instant', price: 170.00, ios: 'Windows' },
+            { id: 353, category: 'tools', title: 'TSM-Pro 3 Months Activation (Instant)', time: 'Instant', price: 80.00, ios: 'Windows' },
+            { id: 354, category: 'tools', title: 'TSM-Pro 6 Months Activation (Instant)', time: 'Instant', price: 120.00, ios: 'Windows' },
+            { id: 355, category: 'tools', title: 'TSM-Pro Add Credits (Instant)', time: 'Instant', price: 50.00, ios: 'Windows' },
+            { id: 356, category: 'schematics', title: 'Borneo Schematics Hardware Tool 1 Year New And Renew Activation (2 User)', time: 'Instant', price: 320.00, ios: 'PC / Web' },
+            { id: 357, category: 'schematics', title: 'Borneo Schematics Hardware Tool 1 Year New And Renew Activation (1 User)', time: 'Instant', price: 240.00, ios: 'PC / Web' },
+            { id: 358, category: 'schematics', title: 'Borneo Schematics 1 User Activation Code [3 Months]', time: 'Instant', price: 110.00, ios: 'PC / Web' },
+            { id: 359, category: 'schematics', title: 'Borneo Schematics 2 User Activation Code [3 Months]', time: 'Instant', price: 150.00, ios: 'PC / Web' },
+            { id: 360, category: 'schematics', title: 'Borneo Schematics 1 User Activation Code [6 Month]', time: 'Instant', price: 180.00, ios: 'PC / Web' },
+            { id: 361, category: 'schematics', title: 'Borneo Schematics 2 User Activation Code [6 Month]', time: 'Instant', price: 230.00, ios: 'PC / Web' },
+            { id: 362, category: 'tools', title: 'Phoenix Service Tool - Nokia HMD TOOL | Sam FRP Server', time: 'Instant', price: 160.00, ios: 'Nokia' },
+            { id: 363, category: 'tools', title: 'Motoking Pro Tool 6 Months License', time: 'Instant', price: 110.00, ios: 'Motorola' },
+            { id: 364, category: 'tools', title: 'Motoking Pro Tool 3 Months License', time: 'Instant', price: 70.00, ios: 'Motorola' },
+            { id: 365, category: 'tools', title: 'Motoking Pro Tool 1 Year License', time: 'Instant', price: 190.00, ios: 'Motorola' },
+            { id: 366, category: 'tools', title: 'TFM Tool Pro 3 Months Activation', time: 'Instant', price: 90.00, ios: 'Windows' },
+            { id: 367, category: 'tools', title: 'TFM Pro tool Credit', time: 'Instant', price: 50.00, ios: 'Windows' },
+            { id: 368, category: 'tools', title: 'TFM Tool Pro Activation (1 Year)', time: 'Instant', price: 180.00, ios: 'Windows' },
+            { id: 369, category: 'tools', title: 'TFM Tool Pro Activation (2 Years)', time: 'Instant', price: 280.00, ios: 'Windows' },
+            { id: 370, category: 'tools', title: 'Android Multi Tool Credits with VIVO | XIAOMI | TECNO | INFINIX | ITEL | REALME | KARBONN | SAMSUNG | OPPO', time: 'Instant', price: 100.00, ios: 'Android' },
+            { id: 371, category: 'tools', title: 'Android Multi Tool - 6 Months', time: 'Instant', price: 130.00, ios: 'Android' },
+            { id: 372, category: 'tools', title: 'Android Multi Tool - 3 Months', time: 'Instant', price: 80.00, ios: 'Android' },
+            { id: 373, category: 'tools', title: 'Android Multi Tool - 1 Years', time: 'Instant', price: 210.00, ios: 'Android' },
+            { id: 374, category: 'tools', title: 'FRPFILE
